@@ -249,6 +249,8 @@ local function on_secondary_quit()
 end
 
 function M.cleanup()
+  vim.api.nvim_set_current_win(M.state.winnr)
+
   if M.state.primary.winnr then
     utils.close_win(M.state.primary.winnr)
     M.state.primary.clear()
@@ -340,6 +342,7 @@ M.state = {
   ctx = {},
   actions = {},
   active_group_index = nil,
+  winnr = nil,
   primary = {
     bufnr = nil,
     winnr = nil,
@@ -368,6 +371,7 @@ function M.code_action_group()
   local params = vim.lsp.util.make_range_params()
   params.context = context
 
+  M.state.winnr = vim.api.nvim_get_current_win()
   vim.lsp.buf_request_all(
     0,
     "textDocument/codeAction",
